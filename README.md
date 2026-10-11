@@ -2,7 +2,7 @@
 
 Portfolio site: SOC analyst, CompTIA Security+ (SY0-701), M.S. in Cybersecurity and Network Administration from Touro University (2026).
 
-**Live:** https://azizulrahaman.github.io/portfolio/
+**Live:** https://azizulrahaman.github.io
 
 ## Run it locally
 
