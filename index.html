@@ -25,6 +25,7 @@
     github:   "https://github.com/azizulrahaman",
     scholar:  "https://scholar.google.com/citations?user=MUV7zUIAAAAJ&hl=en",
     orcid:    "https://orcid.org/0009-0009-1464-672X",
+    researchgate: "https://www.researchgate.net/profile/Md-Azizul-Rahaman/research",   // ResearchGate profile (button under Research)
     resume:   "",   // put resume.pdf next to index.html, then set this to "resume.pdf"
     securityPlus: "https://www.credly.com/badges/52f10105-71d9-483a-91b8-f94a2f6e8235/public_url",   // public Credly badge link for Security+ (shows the ↗ icon on that card)
     credly:   "https://www.credly.com/users/azizul.rahaman.cyber",   // public Credly profile (button under Certifications)
@@ -34,6 +35,8 @@
   };
   /* Remember the visitor's light/dark choice. */
   try { var t = localStorage.getItem("ar-theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+  /* Lets the scroll-in animations hide cards until they are revealed. */
+  document.documentElement.classList.add("js");
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,7 +156,9 @@ p { text-wrap: pretty; }
   background:
     radial-gradient(45% 60% at 8% 70%, var(--glow-1), transparent 70%),
     radial-gradient(45% 60% at 92% 25%, var(--glow-2), transparent 70%);
+  overflow: hidden; /* the spinning orbit must never cause sideways scrolling */
 }
+@supports (overflow: clip) { .hero { overflow: visible; overflow-x: clip; } }
 .hero-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; padding-block: clamp(3rem, 8vw, 6rem); }
 .eyebrow { margin: 0 0 1rem; font: 600 .9rem var(--font-head); letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
 .hero h1 { margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: .01em; line-height: .95; font-size: clamp(2.7rem, 1.4rem + 5.4vw, 5.2rem); }
@@ -169,10 +174,10 @@ p { text-wrap: pretty; }
 
 /* Orbit */
 .orbit { --size: clamp(16rem, 32vw, 26rem); position: relative; width: var(--size); height: var(--size); margin-inline: auto; }
-.ring { position: absolute; border: 1px solid var(--line); border-radius: 50%; }
-.ring.r1 { inset: 0; --d: 70s; --rad: calc(var(--size) * .5); }
-.ring.r2 { inset: 15%; --d: 50s; --rad: calc(var(--size) * .35); border-color: color-mix(in srgb, var(--c3) 45%, var(--line)); }
-.ring.r3 { inset: 30%; --d: 36s; --rad: calc(var(--size) * .2); border-color: color-mix(in srgb, var(--c1) 45%, var(--line)); }
+.ring { position: absolute; border: 1.5px solid var(--line); border-radius: 50%; }
+.ring.r1 { inset: 0; --d: 20s; --rad: calc(var(--size) * .5); border-top-color: var(--c1); }
+.ring.r2 { inset: 15%; --d: 15s; --dir: reverse; --dir-b: normal; --rad: calc(var(--size) * .35); border-color: color-mix(in srgb, var(--c3) 45%, var(--line)); border-right-color: var(--c3); }
+.ring.r3 { inset: 30%; --d: 10s; --rad: calc(var(--size) * .2); border-color: color-mix(in srgb, var(--c1) 45%, var(--line)); border-bottom-color: var(--c1); }
 /* Each arm is a zero-size pivot at the ring's center, so rotating it never widens the page. */
 .arm { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform: rotate(var(--a)); }
 .node { position: absolute; left: -1.5rem; top: calc(-1 * var(--rad) - 1.5rem); width: 3rem; height: 3rem; transform: rotate(calc(-1 * var(--a))); }
@@ -188,10 +193,8 @@ p { text-wrap: pretty; }
   font: 800 clamp(1.4rem, 1rem + 1.6vw, 2.1rem) var(--font-head); letter-spacing: .03em;
   box-shadow: 0 0 40px color-mix(in srgb, var(--c1) 40%, transparent), inset 0 0 24px color-mix(in srgb, var(--c1) 18%, transparent);
 }
-@media (prefers-reduced-motion: no-preference) {
-  .ring { animation: spin var(--d) linear infinite; }
-  .ring .node b { animation: spin var(--d) linear infinite reverse; }
-}
+.ring { animation: spin var(--d) linear infinite var(--dir, normal); }
+.ring .node b { animation: spin var(--d) linear infinite var(--dir-b, reverse); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Sections */
@@ -347,10 +350,39 @@ p { text-wrap: pretty; }
 .footer-inner p { margin: 0; }
 .footer-inner .nowrap { white-space: nowrap; }
 
+/* Motion: hover and tap highlights, scroll-in reveal, hero entrance */
+.menu ul a.active { color: var(--fg); }
+@media (min-width: 901px) {
+  .menu ul a { position: relative; padding-block: .35rem; }
+  .menu ul a::after { content: ""; position: absolute; left: 0; bottom: 0; width: 0; height: 2px; border-radius: 2px; background: var(--accent); transition: width .25s ease; }
+  .menu ul a:hover::after, .menu ul a.active::after { width: 100%; }
+}
+.btn { transition: background .2s ease, box-shadow .2s ease, transform .2s ease, border-color .2s ease; }
+.btn:hover { transform: translateY(-2px); }
+.hero-link { transition: color .2s ease, background .2s ease, transform .2s ease, filter .2s ease; }
+.hero-link:hover { transform: translateY(-3px); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--accent) 60%, transparent)); }
+.card { transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease; }
+main .card:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--accent) 45%, transparent); transform: translateY(-4px); }
+main .timeline > li.card:hover { transform: translateX(6px); }
+main .award-card:hover, main .ach-list.wins .card:hover { border-color: color-mix(in srgb, var(--gold) 60%, var(--line)); box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--gold) 40%, transparent); }
+main .about-text:hover, main .contact-card:hover, main .contact-form:hover { transform: none; }
+.chips li, .mini li { transition: color .2s ease, border-color .2s ease, background .2s ease; }
+.chips li:hover, .mini li:hover { color: var(--accent); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.js main .section .card, .js main .section .section-title {
+  transition: opacity .6s ease var(--rd, 0s), translate .6s ease var(--rd, 0s), border-color .25s ease, box-shadow .25s ease, transform .25s ease;
+}
+.js main .section .card:not(.in), .js main .section .section-title:not(.in) { opacity: 0; translate: 0 24px; }
+@keyframes rise { from { opacity: 0; translate: 0 18px; } }
+@keyframes pop { from { opacity: 0; scale: .88; } }
+.hero-grid > div:first-child > * { animation: rise .7s ease both; }
+.hero-grid > div:first-child > :nth-child(2) { animation-delay: .08s; }
+.hero-grid > div:first-child > :nth-child(3) { animation-delay: .16s; }
+.hero-grid > div:first-child > :nth-child(4) { animation-delay: .24s; }
+.hero-grid > div:first-child > :nth-child(5) { animation-delay: .32s; }
+.orbit { animation: pop .9s ease .15s both; }
+@media print { .js main .section .card, .js main .section .section-title { opacity: 1 !important; translate: none !important; } }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .btn, .proj { transition: none; }
-  .proj:hover { transform: none; }
 }
 @media (max-width: 1024px) {
   .proj-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -653,6 +685,7 @@ p { text-wrap: pretty; }
       <div class="research-links">
         <a class="btn btn-ghost btn-sm" data-link="scholar" target="_blank" rel="noopener">Google Scholar</a>
         <a class="btn btn-ghost btn-sm" data-link="orcid" target="_blank" rel="noopener">ORCID</a>
+        <a class="btn btn-ghost btn-sm" data-link="researchgate" target="_blank" rel="noopener">ResearchGate</a>
       </div>
     </div>
   </section>
@@ -723,6 +756,43 @@ p { text-wrap: pretty; }
 (function () {
   var S = window.SITE || {};
   var root = document.documentElement;
+
+  /* Fade cards and headings in as they scroll into view. */
+  try {
+    var revealEls = document.querySelectorAll("main .section .card, main .section .section-title");
+    if ("IntersectionObserver" in window) {
+      var seen = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); seen.unobserve(en.target); } });
+      }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
+      revealEls.forEach(function (el) {
+        var i = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+        el.style.setProperty("--rd", (Math.min(Math.max(i, 0), 5) * 0.07) + "s");
+        seen.observe(el);
+      });
+    } else {
+      revealEls.forEach(function (el) { el.classList.add("in"); });
+    }
+  } catch (e) { root.classList.remove("js"); }
+
+  /* Highlight the nav link for the section on screen, and the one just clicked. */
+  try {
+    var navLinks = Array.prototype.slice.call(document.querySelectorAll('.menu ul a[href^="#"]'));
+    var byId = {};
+    navLinks.forEach(function (a) {
+      byId[a.getAttribute("href").slice(1)] = a;
+      a.addEventListener("click", function () { navLinks.forEach(function (l) { l.classList.toggle("active", l === a); }); });
+    });
+    if ("IntersectionObserver" in window && navLinks.length) {
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          var hit = byId[en.target.id] || null;
+          if (hit || en.target.id === "top") navLinks.forEach(function (l) { l.classList.toggle("active", l === hit); });
+        });
+      }, { rootMargin: "-45% 0px -50% 0px" });
+      Object.keys(byId).concat("top").forEach(function (id) { var s = document.getElementById(id); if (s) spy.observe(s); });
+    }
+  } catch (e) {}
 
   document.querySelectorAll("[data-link]").forEach(function (a) {
     var key = a.getAttribute("data-link");
