@@ -14,6 +14,10 @@ Then open http://localhost:8000.
 
 ## Edit links
 
-Contact links and the resume button live in the `window.SITE` block at the top of `index.html`. Leave a value empty (`""`) to hide that button. To add a resume, put `resume.pdf` next to `index.html` and set `resume: "resume.pdf"`.
+Contact links, the resume button, and the contact form key live in the `window.SITE` block at the top of `index.html`. Leave a value empty (`""`) to hide that link. To add a resume, put `resume.pdf` next to `index.html` and set `resume: "resume.pdf"`.
 
-Visual style inspired by SofiDev's open-source portfolio (MIT).
+## Contact form
+
+The form sends through [Web3Forms](https://web3forms.com), which emails each message to the address the access key was created with. The key in `formKey` is public by design. Replies go straight to the sender's email address.
+
+Design inspired by Khaliduzzaman Mredul's portfolio.
